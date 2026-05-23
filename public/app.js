@@ -1,3 +1,23 @@
+// Initialize dark mode
+function initializeDarkMode() {
+  const themeToggle = document.getElementById('theme-toggle');
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  
+  if (savedTheme === 'dark') {
+    document.documentElement.classList.add('dark-mode');
+    themeToggle.textContent = '☀️';
+  }
+  
+  themeToggle.addEventListener('click', () => {
+    document.documentElement.classList.toggle('dark-mode');
+    const isDark = document.documentElement.classList.contains('dark-mode');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    themeToggle.textContent = isDark ? '☀️' : '🌙';
+  });
+}
+
+initializeDarkMode();
+
 const fieldSelect = document.getElementById('field-select');
 const valueSelect = document.getElementById('value-select');
 const statusMessage = document.getElementById('status-message');

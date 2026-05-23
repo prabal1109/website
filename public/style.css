@@ -1,7 +1,37 @@
 :root {
   font-family: Inter, system-ui, sans-serif;
-  background: #f5f7fb;
-  color: #172a45;
+  --bg-primary: #f5f7fb;
+  --bg-secondary: #ffffff;
+  --text-primary: #172a45;
+  --text-secondary: #0f172a;
+  --border-color: #e1e5ea;
+  --border-light: #d1d5db;
+  --pre-bg: #f3f4f6;
+  --shadow: rgba(17, 24, 39, 0.06);
+  --button-bg: #2563eb;
+  --button-hover: #1d4ed8;
+  --status-error: #991b1b;
+  --status-success: #14532d;
+}
+
+html.dark-mode {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --text-primary: #e2e8f0;
+  --text-secondary: #f1f5f9;
+  --border-color: #334155;
+  --border-light: #475569;
+  --pre-bg: #1e293b;
+  --shadow: rgba(0, 0, 0, 0.3);
+  --button-bg: #3b82f6;
+  --button-hover: #2563eb;
+  --status-error: #fca5a5;
+  --status-success: #86efac;
+}
+
+:root {
+  background: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 body {
@@ -20,12 +50,12 @@ h1 {
 }
 
 .panel {
-  background: #ffffff;
-  border: 1px solid #e1e5ea;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   border-radius: 14px;
   padding: 24px;
   margin-top: 20px;
-  box-shadow: 0 10px 30px rgba(17, 24, 39, 0.06);
+  box-shadow: 0 10px 30px var(--shadow);
 }
 
 label {
@@ -38,19 +68,46 @@ select,
 button {
   width: 100%;
   padding: 12px 14px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-light);
   border-radius: 10px;
   font-size: 1rem;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
 }
 
-button {
-  margin-top: 20px;
-  background: #2563eb;
+button {var(--button-bg);
   color: white;
   border-width: 0;
   cursor: pointer;
 }
 
+button:hover {
+  background: var(--button-hover);
+}
+
+.theme-toggle {
+  position: fivar(--pre-bg);
+  color: var(--text-primary)
+  top: 20px;
+  right: 20px;
+  background: var(--button-bg);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-ivar(--text-secondary);
+}
+
+#status-message.success {
+  color: var(--status-success);
+}
+
+#status-message.error {
+  color: var(--status-error)r(--button-hover)
 button:hover {
   background: #1d4ed8;
 }
