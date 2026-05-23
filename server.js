@@ -63,10 +63,6 @@ app.get('/api/input-main', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 
 app.get('/api/options', async (req, res) => {
   try {
