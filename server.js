@@ -97,14 +97,23 @@ app.post('/api/submit', async (req, res) => {
 
     const [owner, repo] = await getRepoInfo();
     const octokit = new Octokit({ auth: githubToken });
-    const pr = await octokit.pulls.create({
-      owner,
-      repo,
-      title: `Update input.json: ${field} -> ${value}`,
-      head: branchName,
-      base: 'main',
-      body: `This pull request updates the input.json field **${field}** to **${value}** from the local dashboard.`
-    });
+    let pr;
+    try {
+      pr = await octokit.pulls.create({
+        owner,
+        repo,
+        title: `Update input.json: ${field} -> ${value}`,
+        head: `${owner}:${branchName}`,
+        base: 'main',
+        body: `This pull request updates the input.json field **${field}** to **${value}** from the local dashboard.`
+      });
+    } catch (error) {
+      const githubMessage = error.response?.data?.message || error.message;
+      const authHint = error.status === 401 || error.status === 403
+        ? ' Ensure your token has repo/public_repo scope and is authorized for this repository or organization.'
+        : '';
+      throw new Error(`GitHub PR creation failed: ${githubMessage}.${authHint}`);
+    }
 
     res.json({ branch: branchName, prUrl: pr.data.html_url });
   } catch (error) {
