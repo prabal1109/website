@@ -45,6 +45,19 @@ body {
   padding: 0 16px;
 }
 
+.input-comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+@media (max-width: 1024px) {
+  .input-comparison {
+    grid-template-columns: 1fr;
+  }
+}
+
 h1 {
   margin-bottom: 8px;
 }

@@ -53,6 +53,17 @@ app.get('/api/input', async (req, res) => {
   }
 });
 
+app.get('/api/input-main', async (req, res) => {
+  try {
+    // Get the input.json from main branch
+    const mainContent = await runGitCommand(`git show origin/main:${path.basename(inputPath)}`);
+    const input = JSON.parse(mainContent);
+    res.json(input);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.get('/api/options', async (req, res) => {
   try {
     const options = await readOptions();
@@ -69,7 +80,13 @@ app.post('/api/submit', async (req, res) => {
       return res.status(400).json({ error: 'field and value are required' });
     }
 
+    // Sync with main branch to avoid conflicts
     const currentBranch = await runGitCommand('git branch --show-current');
+    await runGitCommand('git fetch origin main');
+    await runGitCommand('git checkout main');
+    await runGitCommand('git pull origin main');
+    await runGitCommand(`git checkout ${currentBranch}`);
+
     const status = await runGitCommand('git status --porcelain');
     if (status.trim()) {
       return res.status(400).json({ error: 'Please commit or stash any existing changes before submitting.' });
