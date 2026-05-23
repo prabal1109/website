@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Input JSON Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Input JSON Dashboard</h1>
+    <p>Choose a field and a value, then submit to update <code>input.json</code> and create a PR.</p>
+
+    <div class="panel">
+      <form id="dashboard-form">
+        <label for="field-select">Field</label>
+        <select id="field-select"></select>
+
+        <label for="value-select">Value</label>
+        <select id="value-select"></select>
+
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+
+    <div class="panel status" id="status-panel">
+      <h2>Status</h2>
+      <div id="status-message">Loading...</div>
+    </div>
+
+    <div class="panel">
+      <h2>Current input.json</h2>
+      <pre id="input-json">{ }</pre>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+:root {
+  font-family: Inter, system-ui, sans-serif;
+  background: #f5f7fb;
+  color: #172a45;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 760px;
+  margin: 32px auto;
+  padding: 0 16px;
+}
+
+h1 {
+  margin-bottom: 8px;
+}
+
+.panel {
+  background: #ffffff;
+  border: 1px solid #e1e5ea;
+  border-radius: 14px;
+  padding: 24px;
+  margin-top: 20px;
+  box-shadow: 0 10px 30px rgba(17, 24, 39, 0.06);
+}
+
+label {
+  display: block;
+  margin: 16px 0 8px;
+  font-weight: 600;
+}
+
+select,
+button {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+
+button {
+  margin-top: 20px;
+  background: #2563eb;
+  color: white;
+  border-width: 0;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1d4ed8;
+}
+
+pre {
+  background: #f3f4f6;
+  padding: 16px;
+  border-radius: 12px;
+  overflow-x: auto;
+}
+
+.status {
+  word-break: break-word;
+}
+
+#status-message.info {
+  color: #0f172a;
+}
+
+#status-message.success {
+  color: #14532d;
+}
+
+#status-message.error {
+  color: #991b1b;
+}
+
+#status-message a {
+  color: inherit;
+  text-decoration: underline;
+  margin-left: 8px;
+}
