@@ -60,14 +60,20 @@
           <button id="next-month">&gt;</button>
         </div>
         <div id="calendar" class="calendar"></div>
+        <p style="text-align: center; margin-top: 16px; font-size: 0.9rem; color: var(--text-secondary); opacity: 0.8;">
+          💡 Click on two dates to set the event range (start and end date)
+        </p>
       </div>
       
       <div class="panel">
         <h2>Events & Holidays</h2>
         <div id="events-list"></div>
         <form id="event-form" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color);">
-          <label for="event-date">Date</label>
-          <input type="date" id="event-date" required />
+          <label for="event-start-date">Start Date</label>
+          <input type="date" id="event-start-date" required />
+          
+          <label for="event-end-date">End Date</label>
+          <input type="date" id="event-end-date" required />
           
           <label for="event-name">Event Name</label>
           <input type="text" id="event-name" required />

@@ -167,6 +167,7 @@ fetchData().catch(error => {
 // Calendar Tab - Functions
 let currentDate = new Date();
 let events = JSON.parse(localStorage.getItem('calendarEvents')) || [];
+let dateRangeStart = null;
 
 function initializeCalendar() {
   renderCalendar();
@@ -220,12 +221,19 @@ function renderCalendar() {
       day.classList.add('today');
     }
     
-    if (events.some(e => e.date === dateString)) {
-      day.classList.add('has-event');
-    }
+    // Check if date is part of any event range
+    events.forEach(e => {
+      const eventStart = new Date(e.startDate);
+      const eventEnd = new Date(e.endDate);
+      const currentDateObj = new Date(dateString);
+      
+      if (currentDateObj >= eventStart && currentDateObj <= eventEnd) {
+        day.classList.add('has-event');
+      }
+    });
     
     day.addEventListener('click', () => {
-      document.getElementById('event-date').value = dateString;
+      selectDateRange(dateString);
     });
     
     calendar.appendChild(day);
@@ -242,18 +250,51 @@ function renderCalendar() {
   }
 }
 
+function selectDateRange(dateString) {
+  if (!dateRangeStart) {
+    // First click - set start date
+    dateRangeStart = dateString;
+    document.getElementById('event-start-date').value = dateString;
+  } else {
+    // Second click - set end date
+    const startDate = new Date(dateRangeStart);
+    const endDate = new Date(dateString);
+    
+    if (endDate < startDate) {
+      // Swap if end is before start
+      document.getElementById('event-start-date').value = dateString;
+      document.getElementById('event-end-date').value = dateRangeStart;
+    } else {
+      document.getElementById('event-start-date').value = dateRangeStart;
+      document.getElementById('event-end-date').value = dateString;
+    }
+    
+    dateRangeStart = null;
+  }
+}
+
 function renderEventsList() {
   const eventsList = document.getElementById('events-list');
   eventsList.innerHTML = '';
   
-  const sortedEvents = [...events].sort((a, b) => new Date(a.date) - new Date(b.date));
+  const sortedEvents = [...events].sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+  
+  if (sortedEvents.length === 0) {
+    eventsList.innerHTML = '<p style="text-align: center; color: var(--text-secondary); opacity: 0.7;">No events yet</p>';
+    return;
+  }
   
   sortedEvents.forEach((event, index) => {
     const eventItem = document.createElement('div');
     eventItem.className = `event-item ${event.type}`;
+    
+    const startDate = new Date(event.startDate).toLocaleDateString();
+    const endDate = new Date(event.endDate).toLocaleDateString();
+    const dateRange = startDate === endDate ? startDate : `${startDate} - ${endDate}`;
+    
     eventItem.innerHTML = `
       <div class="event-info">
-        <div class="event-date">${new Date(event.date).toLocaleDateString()}</div>
+        <div class="event-date">${dateRange}</div>
         <div class="event-name">${event.name}</div>
         <span class="event-type ${event.type}">${event.type.charAt(0).toUpperCase() + event.type.slice(1)}</span>
       </div>
@@ -280,15 +321,25 @@ function setupEventForm() {
   eventForm.addEventListener('submit', (e) => {
     e.preventDefault();
     
-    const date = document.getElementById('event-date').value;
+    const startDate = document.getElementById('event-start-date').value;
+    const endDate = document.getElementById('event-end-date').value;
     const name = document.getElementById('event-name').value;
     const type = document.getElementById('event-type').value;
     
-    if (date && name) {
-      events.push({ date, name, type });
+    if (startDate && endDate && name) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      
+      if (start > end) {
+        alert('Start date must be before or equal to end date');
+        return;
+      }
+      
+      events.push({ startDate, endDate, name, type });
       localStorage.setItem('calendarEvents', JSON.stringify(events));
       
       eventForm.reset();
+      dateRangeStart = null;
       renderCalendar();
       renderEventsList();
     }
