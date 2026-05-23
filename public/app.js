@@ -22,24 +22,29 @@ const fieldSelect = document.getElementById('field-select');
 const valueSelect = document.getElementById('value-select');
 const statusMessage = document.getElementById('status-message');
 const inputJsonPre = document.getElementById('input-json');
+const inputJsonMainPre = document.getElementById('input-json-main');
 const form = document.getElementById('dashboard-form');
 
 let currentInput = {};
+let mainInput = {};
 let fieldOptions = {};
 
 async function fetchData() {
-  const [inputRes, optionsRes] = await Promise.all([
+  const [inputRes, optionsRes, mainRes] = await Promise.all([
     fetch('/api/input'),
-    fetch('/api/options')
+    fetch('/api/options'),
+    fetch('/api/input-main')
   ]);
 
   currentInput = await inputRes.json();
   fieldOptions = await optionsRes.json();
+  mainInput = await mainRes.json();
 
   updateInputPreview();
   populateFieldSelect();
 }
 
+  inputJsonMainPre.textContent = JSON.stringify(mainInput, null, 2);
 function updateInputPreview() {
   inputJsonPre.textContent = JSON.stringify(currentInput, null, 2);
 }
