@@ -36,6 +36,7 @@ This repository now includes a local dashboard that can edit `input.json`, creat
 - The PR is created against the `main` branch.
 - Make sure the repo is clean before submitting.
 - Your GitHub token must have `repo` permissions.
+- If you are using a fork or organization repo, authorize the token for that org and verify the `repo`/`public_repo` scope.
 
 ## Existing command
 
