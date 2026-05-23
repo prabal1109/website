@@ -44,9 +44,9 @@ async function fetchData() {
   populateFieldSelect();
 }
 
-  inputJsonMainPre.textContent = JSON.stringify(mainInput, null, 2);
 function updateInputPreview() {
   inputJsonPre.textContent = JSON.stringify(currentInput, null, 2);
+  inputJsonMainPre.textContent = JSON.stringify(mainInput, null, 2);
 }
 
 function populateFieldSelect() {
@@ -78,6 +78,14 @@ function updateValueSelect() {
 
 fieldSelect.addEventListener('change', () => {
   updateValueSelect();
+});
+
+valueSelect.addEventListener('change', () => {
+  // Update preview when value is selected
+  const field = fieldSelect.value;
+  const value = valueSelect.value;
+  currentInput[field] = value;
+  updateInputPreview();
 });
 
 form.addEventListener('submit', async (event) => {
