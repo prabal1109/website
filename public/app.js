@@ -18,6 +18,37 @@ function initializeDarkMode() {
 
 initializeDarkMode();
 
+// Tab Navigation
+function initializeTabs() {
+  const tabButtons = document.querySelectorAll('.tab-button');
+  
+  tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const tabName = button.dataset.tab;
+      
+      // Hide all tabs
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Remove active from all buttons
+      tabButtons.forEach(btn => btn.classList.remove('active'));
+      
+      // Show selected tab and activate button
+      document.getElementById(`${tabName}-tab`).classList.add('active');
+      button.classList.add('active');
+      
+      // Initialize calendar if it's the calendar tab
+      if (tabName === 'calendar') {
+        initializeCalendar();
+      }
+    });
+  });
+}
+
+initializeTabs();
+
+// GitHub Tab - Dashboard Functions
 const fieldSelect = document.getElementById('field-select');
 const valueSelect = document.getElementById('value-select');
 const statusMessage = document.getElementById('status-message');
@@ -81,7 +112,6 @@ fieldSelect.addEventListener('change', () => {
 });
 
 valueSelect.addEventListener('change', () => {
-  // Update preview when value is selected
   const field = fieldSelect.value;
   const value = valueSelect.value;
   currentInput[field] = value;
@@ -133,3 +163,142 @@ function setStatus(message, type, link) {
 fetchData().catch(error => {
   setStatus(`Unable to load dashboard: ${error.message}`, 'error');
 });
+
+// Calendar Tab - Functions
+let currentDate = new Date();
+let events = JSON.parse(localStorage.getItem('calendarEvents')) || [];
+
+function initializeCalendar() {
+  renderCalendar();
+  renderEventsList();
+  setupCalendarControls();
+  setupEventForm();
+}
+
+function renderCalendar() {
+  const month = currentDate.getMonth();
+  const year = currentDate.getFullYear();
+  const monthName = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(currentDate);
+  
+  document.getElementById('calendar-month').textContent = monthName;
+  
+  const calendar = document.getElementById('calendar');
+  calendar.innerHTML = '';
+  
+  // Add day headers
+  const dayHeaders = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  dayHeaders.forEach(day => {
+    const dayHeader = document.createElement('div');
+    dayHeader.className = 'calendar-day-header';
+    dayHeader.textContent = day;
+    calendar.appendChild(dayHeader);
+  });
+  
+  // Get first day of month and number of days
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const daysInPrevMonth = new Date(year, month, 0).getDate();
+  
+  // Previous month's days
+  for (let i = firstDay - 1; i >= 0; i--) {
+    const day = document.createElement('div');
+    day.className = 'calendar-day other-month';
+    day.textContent = daysInPrevMonth - i;
+    calendar.appendChild(day);
+  }
+  
+  // Current month's days
+  const today = new Date();
+  for (let i = 1; i <= daysInMonth; i++) {
+    const day = document.createElement('div');
+    day.className = 'calendar-day';
+    day.textContent = i;
+    
+    const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+    
+    if (today.getFullYear() === year && today.getMonth() === month && today.getDate() === i) {
+      day.classList.add('today');
+    }
+    
+    if (events.some(e => e.date === dateString)) {
+      day.classList.add('has-event');
+    }
+    
+    day.addEventListener('click', () => {
+      document.getElementById('event-date').value = dateString;
+    });
+    
+    calendar.appendChild(day);
+  }
+  
+  // Next month's days
+  const totalCells = calendar.children.length - 7;
+  const remainingCells = 35 - totalCells;
+  for (let i = 1; i <= remainingCells; i++) {
+    const day = document.createElement('div');
+    day.className = 'calendar-day other-month';
+    day.textContent = i;
+    calendar.appendChild(day);
+  }
+}
+
+function renderEventsList() {
+  const eventsList = document.getElementById('events-list');
+  eventsList.innerHTML = '';
+  
+  const sortedEvents = [...events].sort((a, b) => new Date(a.date) - new Date(b.date));
+  
+  sortedEvents.forEach((event, index) => {
+    const eventItem = document.createElement('div');
+    eventItem.className = `event-item ${event.type}`;
+    eventItem.innerHTML = `
+      <div class="event-info">
+        <div class="event-date">${new Date(event.date).toLocaleDateString()}</div>
+        <div class="event-name">${event.name}</div>
+        <span class="event-type ${event.type}">${event.type.charAt(0).toUpperCase() + event.type.slice(1)}</span>
+      </div>
+      <button class="event-delete" onclick="deleteEvent(${index})">Delete</button>
+    `;
+    eventsList.appendChild(eventItem);
+  });
+}
+
+function setupCalendarControls() {
+  document.getElementById('prev-month').addEventListener('click', () => {
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    renderCalendar();
+  });
+  
+  document.getElementById('next-month').addEventListener('click', () => {
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    renderCalendar();
+  });
+}
+
+function setupEventForm() {
+  const eventForm = document.getElementById('event-form');
+  eventForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const date = document.getElementById('event-date').value;
+    const name = document.getElementById('event-name').value;
+    const type = document.getElementById('event-type').value;
+    
+    if (date && name) {
+      events.push({ date, name, type });
+      localStorage.setItem('calendarEvents', JSON.stringify(events));
+      
+      eventForm.reset();
+      renderCalendar();
+      renderEventsList();
+    }
+  });
+}
+
+function deleteEvent(index) {
+  events.splice(index, 1);
+  localStorage.setItem('calendarEvents', JSON.stringify(events));
+  renderCalendar();
+  renderEventsList();
+}
+
